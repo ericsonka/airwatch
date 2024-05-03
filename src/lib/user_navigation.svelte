@@ -24,7 +24,10 @@
     <div class="nav_button transaction" on:click={()=>{handle_goto_page('favourite')}}>
         <span><i class="fa-solid fa-heart"></i></span>
     </div>
-   
+    <div class="nav_button transaction" on:click={()=>{handle_goto_page('notification')}}>
+    <span><i class="fa-solid fa-bell"></i></span>
+    <!-- <p>Notification</p> -->
+</div>
 </div>
 
 <style>
@@ -37,7 +40,7 @@
         right: 0;
         left: 0;
         height: 43px;
-        width: 70%;
+        width: 100%;
         z-index: 55;
         border-top: 1px solid #d9d5d579;
         margin: 0 auto;

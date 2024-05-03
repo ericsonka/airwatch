@@ -95,25 +95,32 @@
 					return;
 				}
 
-				console.log('Advanced markers are available');
+				
+				// console.log('Advanced markers are available');
 				for (const property of address_arr.items) {
 					
-					console.log('position', property.location_coordinates);
+					// console.log('property', property.sensor_data);
+					// console.log('position', property.location_coordinates);
+					console.log(address_arr.items);
 
 					const position = new google.maps.LatLng(
-						parseFloat(property.location_coordinates.split(',')[0].trim()),
+						parseFloat(property.location_coordinates.split(',')[0].trim()), 
 						parseFloat(property.location_coordinates.split(',')[1].trim())
 					);
-
-
+					// const icon = document.createElement('span');
+					let sensor_value = property.sensor_data.sensor_value;
+					console.log(sensor_value);
+					// icon.innerHTML = `${sensor_value}`;
+					// icon.innerHTML = "2"
+					
+					const value = parseFloat(property.sensor_data.sensor_value);
+    				// const quality = value;
 
 					const icon = document.createElement('span');
+					icon.innerHTML = `${value}`;
 
-					let sensor = address_arr.sensors.filter((sensor) => sensor.unique_id_device == property.device_profile_id)[0]
+					// Set color based on quality
 					
-
-					icon.innerHTML = `${sensor.value}`;
-
 					const faPin = new PinElement({
 						glyph: icon,
 						glyphColor: '#ff8300',

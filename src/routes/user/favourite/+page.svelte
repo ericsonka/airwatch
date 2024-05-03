@@ -1,35 +1,54 @@
 <script>
 	// import Header from '$lib/user_header.svelte';
+   
+    import { onMount } from 'svelte';
 	import UserNavigation from '$lib/user_navigation.svelte';
 
+    // Props
     export let data;
-    let sensor_data = data.sensor_data
-    // console.log(sensor_data);
+    
+    // Initializing variables
+    let sensor_data = data.combinedData;
+   
+let liked_user_id = ''
+ 
 
+onMount(() => {
+    liked_user_id = localStorage.getItem("logged_in_user_id");
+    console.log(liked_user_id); 
+})
+
+
+    // Function to get air quality category
     function getQuality(value) {
-        if (value < 80) return "Good";
-        if (value > 50 && value < 90) return "moderate";
-        if (value > 100 && value < 140) return "unhealthy for sensitive groups";
-        if (value > 140 && value < 200) return "Unhealthy";
-        if(value > 200) return "very unhealthy";
-        // return "healthy";
+        if (value <= 80) return "Good";
+        if (value >= 50 && value <= 90) return "Moderate";
+        if (value >= 100 && value <= 140) return "Unhealthy for Sensitive Groups";
+        if (value >= 140 && value <= 200) return "Unhealthy";
+        if(value >= 200) return "Very Unhealthy";
     }
+
+    // Function to navigate to sensor details page
     function got_view_page(sensor_object_id){
         if(sensor_object_id){
             location.href = "sensor_details/"+ sensor_object_id;
-        }
+        }  
     }
-   async function get_favourite(fav_id){
-        let response = await fetch('/api/users/device_favourite', {
+
+    // Function to remove favourite
+    async function get_favourite(device_profile_id, liked_user_id){
+        let response = await fetch('/api/users/delete_favourite', {
             method: "POST", 
             body: JSON.stringify(
-                fav_id
+                {device_profile_id, liked_user_id}
             ),
             headers: {
                 "Content-Type": "application/json",
             },
-        })
-        // console.log(response);
+        });
+        let result = await response.json();
+        let return_value = result.data_to_delete.return_values;
+        sensor_data = return_value;
     }  
     let background_image = { 
         url:'/users/background.jpg'
@@ -40,37 +59,53 @@
 </script>
 
 <section>
-    <!-- <Header/> -->
     <div class="main_container" style="background-image: url({background_image.url});">
-        {#each sensor_data as data_sensor}
-            <div class="card" >
-                <div class="section_heading"> <img src="{air_logo.url}" alt=""><span class="heading_word">Air Quality</span></div>
-                <div class="inner-card">
-                    <div class="card-header">
-                        <span>{data_sensor.new_device_location} </span>
-                        <i class="fa-regular fa-heart favourate" on:click={()=>get_favourite(data_sensor.unique_id_device)}></i>
-                    </div>
-                    {#if data_sensor.value}
-                        <div class="value">
-                            <span>{data_sensor.value}</span>
+        <div class="inner_con">
+            {#if sensor_data && liked_user_id}
+                {#each sensor_data as data_sensor}
+                    {#if data_sensor.liked_user_id === liked_user_id}
+                    <!-- <pre>{ data_sensor.liked_user_id === liked_user_id}</pre> -->
+                        <div class="card">
+                            <div class="section_heading">
+                                <img src="{air_logo.url}" alt="">
+                                <span class="heading_word">Air Quality</span>
+                            </div>
+                            <div class="inner-card">
+                                <div class="card-header">
+                                    <span>{data_sensor.location_name}</span>
+                                    <i class="fa-regular fa-heart favourate"  on:click={() => get_favourite(data_sensor.device_profile_id, data_sensor.liked_user_id)}></i>
+                                </div>
+                                {#if data_sensor.sensor_data}
+                                    <div class="value">
+                                        <span>{data_sensor.sensor_data.sensor_value}</span>
+                                    </div>
+                                {/if}
+                                <div class="air_quality_messaure">
+                                    <span class="temp">US AQI</span>
+                                </div>
+                            </div>
+                            {#if data_sensor.sensor_data}
+                                <div class="temp-scale {getQuality(data_sensor.sensor_data.sensor_value)}">
+                                    <span on:click={() =>got_view_page(data_sensor.sensor_data.unique_id_device)}>{getQuality(data_sensor.sensor_data.sensor_value)}</span>
+                                </div>
+                            {/if}
                         </div>
                     {/if}
-                    <div class="air_quality_messaure">
-                        <span class="temp">US AQI</span>
-                    </div>
-                </div>
-                <div class="temp-scale  {getQuality(data_sensor.value)}">
-                    <span on:click={() =>got_view_page(data_sensor._id)}>{getQuality(data_sensor.value)}</span>
-                </div>
-            </div>
-        {/each}
+                {/each}
+            {/if}
+        </div>
     </div>
     <UserNavigation/>
-   
-
 </section>
 
+
+
+
 <style>
+ 
+.fav-selected {
+    color: red; /* Color when selected */
+}
     section{
         overflow: hidden;
     }
@@ -81,7 +116,15 @@
         background-position: center;
         background-repeat: no-repeat;
         padding-bottom: 60px;
-        height: 100vh;
+        height: auto;
+        overflow-y: scroll;
+        min-height: 100vh;
+}
+    
+    .inner_con{
+        padding-top: 3px;
+        /* height: 100vh; */
+        /* overflow-y: scroll; */
     }
     .card {
         border: 1px solid #ccc;
@@ -268,6 +311,15 @@
         letter-spacing: 1px;
         text-transform: capitalize;
     }
+    .Unhealthy {
+        background-color: rgb(255, 5, 5);
+        color: white;
+        font-size: 15px;
+        font-weight: 200;
+        text-align: center;
+        letter-spacing: 1px;
+        text-transform: capitalize;
+    }
     .risky {
         background-color: red;
         color: white;   
@@ -282,6 +334,14 @@
         font-weight: 700;
         font-size: 18px;
         text-transform: capitalize;  
+    }
+
+    .card-header .fav_selected{
+        color: red;
+    }
+    .favourate{
+        cursor: pointer;
+        color:red;
     }
     
 </style>

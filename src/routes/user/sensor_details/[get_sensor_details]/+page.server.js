@@ -1,14 +1,30 @@
 export async function load({ params }) {
-    // console.log(params);
+    let sensor_id = params.get_sensor_details;
+    console.log(sensor_id); 
 
-    let sensor_id = params.get_sensor_details
-   
-    let get_all_sensors = await fetch('https://ap-south-1.aws.data.mongodb-api.com/app/application-0-axqssfl/endpoint/get_all_sensors')
+    let get_all_sensors = await fetch('https://ap-south-1.aws.data.mongodb-api.com/app/application-0-axqssfl/endpoint/get_all_sensors');
     let result = await get_all_sensors.json(); 
-    // console.log(result.data[0]);
-   let filter_data = result.data.filter((sensor) => sensor._id == sensor_id)
-   console.log(filter_data);
+    let filter_data = result.data.filter((sensor) => sensor.unique_id_device == sensor_id);
+    console.log(filter_data); 
+
+    const get_all_devices = await fetch('https://ap-south-1.aws.data.mongodb-api.com/app/application-0-axqssfl/endpoint/get_all_devices');
+    const device_result = await get_all_devices.json();
+    const devices = device_result.data;
+    // console.log(devices);
+
+    const combinedData = devices
+        .filter(device => device.device_profile_id === sensor_id) 
+        .map(device => {
+            const deviceSensorData = filter_data.filter(data => data.unique_id_device === device.device_profile_id);
+            return {
+                ...device,
+                sensor_data: deviceSensorData
+            };
+        });
+
+    console.log(combinedData);
+
     return {
-        filter_data
-    }
-}      
+        combinedData
+    };
+}

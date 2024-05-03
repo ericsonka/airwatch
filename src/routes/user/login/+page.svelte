@@ -17,8 +17,11 @@
       },
     });
     // console.log(await response.json());
-    let result = await response.json();
+    let result = await response.json(); 
+    console.log(result); 
     if (result.data_1.success) {
+      let user_id = result.data_1.user_details[0].user_profile_id
+      localStorage.setItem("logged_in_user_id",user_id);
       window.location.href = "/user/dashboard";
     } else {
       // alert(result.data.message)
