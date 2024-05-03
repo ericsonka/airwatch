@@ -147,21 +147,19 @@ let loading_screen = true;
         background-size: cover;
         background-position: center;
         background-repeat: no-repeat;
-        padding-bottom: 60px;
-        margin-bottom: 50px;
+        /* padding-bottom: 60px;
+        margin-bottom: 50px; */
         height: auto;
         overflow-y: scroll;
         min-height: 100vh;
-        position: fixed;
+        /* position: fixed; */
         width: 100vw;
         background-position: top;
     }
 
     .inner_con {
         padding-top: 3px;
-        overflow-y: scroll;
-        max-height: 100vh;
-        padding-bottom: 60px;
+       
         margin-bottom: 50px;
     }
     .card {
@@ -220,7 +218,7 @@ let loading_screen = true;
         margin-top: 44px;
         margin-inline: 20px;
         height: auto;
-        margin-bottom: 80px;
+        margin-bottom: 90px;
     }
 
     .card:hover {
