@@ -10,7 +10,7 @@ export async function load({  }) {
     // console.log(liked_user_id);
     console.log(favourite_sensor_data);  
     
-    const get_all_sensors = await fetch('https://ap-south-1.aws.data.mongodb-api.com/app/application-0-axqssfl/endpoint/get_all_sensors');
+    const get_all_sensors = await fetch('https://ap-south-1.aws.data.mongodb-api.com/app/application-0-axqssfl/endpoint/get_all_sensors_air');
     const sensor_result = await get_all_sensors.json();
     const sensor_data = sensor_result.data;
     console.log(sensor_data);

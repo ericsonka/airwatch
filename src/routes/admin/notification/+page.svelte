@@ -1,6 +1,6 @@
 <script>
   import { onMount } from "svelte";
-  import UserNavigation from "$lib/navigation.svelte";
+  import Navigation from "$lib/navigation.svelte";
   export let data;
   let sensor_data = data.combinedData;
 
@@ -50,7 +50,7 @@
     {/each}
     
     {/if}
-  <UserNavigation />
+  <Navigation />
 </section>
 
 <style>
