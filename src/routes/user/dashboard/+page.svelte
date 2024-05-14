@@ -4,11 +4,11 @@
     import UserNavigation from "$lib/user_navigation.svelte";
     export let data;
     let sensor_data = data.combinedData;
-    // console.log(sensor_data);
+    console.log(sensor_data);
 let loading_screen = true;
 
     function getQuality(value) {
-        // console.log(value);
+        console.log(value);
 
         if (value <= 80) return "Good";
         if (value >= 50 && value <= 90) return "moderate";
@@ -44,7 +44,7 @@ let loading_screen = true;
                 "Content-Type": "application/json",
             },
         });
-        // console.log(response);
+        console.log(response);
     }
     let background_image = {
         url: "/users/2148098554.jpg",
@@ -52,11 +52,27 @@ let loading_screen = true;
     let air_logo = {
         url: "/air_quallity_logo/logo.png",
     };
+    
+
+    async function get_latest_data(){
+        let request = await fetch('/api/users/get_latest_data', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({})
+        })
+        let result = await request.json();
+        console.log(result); 
+        sensor_data = result;
+    }
     onMount(() => {
+        setInterval(get_latest_data, 10000);
+        
         setTimeout(() => {
         
             loading_screen = false;
-        },5000)
+        },3000)
     })
     // let latestReading = sensor_data[0].readings[sensor_data[0].readings.length-1];
     // console.log(latestReading);
@@ -70,7 +86,8 @@ let loading_screen = true;
     class="main_container"
     style="background-image: url({background_image.url});"
     >
-        <div class="inner_con">
+    {#if sensor_data}
+            <div class="inner_con">
             {#each sensor_data as data_sensor}
                 <div class="card">
                     <div class="section_heading">
@@ -119,7 +136,9 @@ let loading_screen = true;
                     </div>
                 </div>
             {/each}
-        </div>
+        </div> 
+        {/if}
+       
     </div>
     <UserNavigation />
 </section>

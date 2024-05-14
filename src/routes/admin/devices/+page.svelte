@@ -117,6 +117,7 @@
         console.log(devices_data_list);
     }
    
+   console.log(devices_data_list);
 </script>
 
 <section>
@@ -130,6 +131,7 @@
                 <p>Add Devices</p>
             </div>
         </div>
+        
         {#each devices_data_list as device}
             <div class="added_device_list">
                 <p>Device Id :{device.device_id}</p>
@@ -141,11 +143,14 @@
                         >{device.device_status}</span
                     >
                 </h4>
+                {#if device.device_profile_id !== "DRV_eUWtpCw59" && device.device_profile_id !== 'DRV_@skt4oOMb'}
+                
                 <i
                     on:click={() =>
                         handle_delete_bus_profile(device.device_profile_id)}
                     class="fa-solid fa-trash delete"
                 ></i>
+                {/if}
                 <!-- <pre>{device._id}</pre> -->
             </div>
         {/each}

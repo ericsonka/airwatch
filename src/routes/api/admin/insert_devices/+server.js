@@ -35,7 +35,7 @@ export async function POST({ request }) {
 
     randomNumber = Math.floor(Math.random() * (max - min + 1)) + min;
 
-    console.log(randomNumber);
+    console.log(randomNumber); 
 
     let currentDate = new Date().toUTCString(); 
     console.log(currentDate);
